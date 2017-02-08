@@ -6,19 +6,9 @@ mmngr-objs := $(CFILES:.c=.o)
 ccflags-y	+= -D$(MMNGR_CONFIG)
 ccflags-y	+= -D$(MMNGR_SSP_CONFIG)
 ccflags-y	+= -D$(MMNGR_IPMMU_MMU_CONFIG)
-ccflags-y	+= -I$(KERNELSRC)/include
+ccflags-y	+= -I$(PWD)/../include
 
 all:
-	$(CP) ../include/mmngr_public.h $(KERNELSRC)/include
-	$(CP) ../include/mmngr_private.h $(KERNELSRC)/include
-	$(CP) ../include/mmngr_private_cmn.h $(KERNELSRC)/include
-	$(CP) ../include/mmngr_public_cmn.h $(KERNELSRC)/include
-	$(CP) ../include/mmngr_private_cmn.h $(INCSHARED)
-	$(CP) ../include/mmngr_public_cmn.h $(INCSHARED)
-	make -C $(KERNELSRC) M=$(PWD) modules
+	make -C $(KERNELDIR) M=$(PWD) modules
 clean:
-	make -C $(KERNELSRC) M=$(PWD) clean
-	rm -f $(KERNELSRC)/include/mmngr_public.h
-	rm -f $(KERNELSRC)/include/mmngr_private.h
-	rm -f $(KERNELSRC)/include/mmngr_private_cmn.h
-	rm -f $(KERNELSRC)/include/mmngr_public_cmn.h
+	make -C $(KERNELDIR) M=$(PWD) clean
