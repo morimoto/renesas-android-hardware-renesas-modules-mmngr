@@ -257,6 +257,9 @@ static struct sg_table *dmabuf_map_dma_buf(struct dma_buf_attachment *attach,
 		return NULL;
 	}
 
+	sg_set_page(sgt->sgl, pfn_to_page(PFN_DOWN(priv->hard_addr)),
+		    priv->size, offset_in_page(priv->hard_addr));
+
 	sg_dma_address(sgt->sgl) = priv->hard_addr;
 	sg_dma_len(sgt->sgl) = priv->size;
 
