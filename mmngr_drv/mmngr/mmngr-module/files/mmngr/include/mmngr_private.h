@@ -204,11 +204,6 @@ static void mm_exit(void);
 
 static int validate_memory_map(void);
 
-#ifdef MMNGR_SALVATORX
-#define MM_OMXBUF_ADDR		(mm_kernel_reserve_addr)
-#define MM_OMXBUF_SIZE		(mm_kernel_reserve_size)
-#endif /* MMNGR_SALVATORX */
-
 #ifdef MMNGR_EBISU
 #ifdef IPMMU_MMU_SUPPORT
 	#define MM_OMXBUF_ADDR	(mm_kernel_reserve_addr)
@@ -217,6 +212,10 @@ static int validate_memory_map(void);
 #endif /* IPMMU_MMU_SUPPORT */
 
 #define MM_OMXBUF_SIZE		(64 * 1024 * 1024)
+
+#else /* !MMNGR_EBISU */
+#define MM_OMXBUF_ADDR		(mm_kernel_reserve_addr)
+#define MM_OMXBUF_SIZE		(mm_kernel_reserve_size)
 #endif /* MMNGR_EBISU */
 
 #define	MM_CO_ORDER		(12)
