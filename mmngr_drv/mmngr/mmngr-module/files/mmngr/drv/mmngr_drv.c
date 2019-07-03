@@ -1100,6 +1100,14 @@ static int validate_memory_map(void)
 	const char *buf_name;
 #endif
 
+/*
+ * For Salvator and SK-KF boards, MM_OMXBUF_SIZE is an alias for (mm_kernel_reserve_size)
+ * (#define MM_OMXBUF_SIZE (mm_kernel_reserve_size)). In this case,
+ * mm_kernel_reserve_size is compared with itself and always equal false.
+ * This comparison is illogical and compiler throws the warnings during the build.
+ * To avoid this, the following check should be added.
+ */
+#ifdef MMNGR_EBISU
 	if (mm_kernel_reserve_size < MM_OMXBUF_SIZE) {
 		pr_warn("The size (0x%x) of OMXBUF is over "\
 			"the kernel reserved size (0x%llx) for Multimedia.\n",
@@ -1107,6 +1115,7 @@ static int validate_memory_map(void)
 		pr_warn("Failed to initialize MMNGR.\n");
 		ret = -1;
 	}
+#endif
 
 #ifdef MMNGR_SSP_ENABLE
 	buf_size = MM_OMXBUF_SIZE + MM_SSPBUF_SIZE;
