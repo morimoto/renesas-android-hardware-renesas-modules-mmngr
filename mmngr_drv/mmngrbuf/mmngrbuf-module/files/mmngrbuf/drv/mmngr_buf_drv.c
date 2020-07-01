@@ -66,6 +66,7 @@
 #include <linux/miscdevice.h>
 #include <linux/platform_device.h>
 #include <linux/dma-buf.h>
+#include <linux/of_address.h>
 
 #include "mmngr_buf_private.h"
 
@@ -174,7 +175,7 @@ static long compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		return ret;
 	}
 
-	if (!access_ok(VERIFY_WRITE, tmp, sizeof(*tmp))
+	if (!access_ok( tmp, sizeof(*tmp))
 	    || __put_user(tmp32.size, &tmp->size)
 	    || __put_user(tmp32.hard_addr, &tmp->hard_addr)
 	    || __put_user(tmp32.buf, &tmp->buf))
@@ -229,7 +230,7 @@ static struct miscdevice misc = {
 	.fops		= &fops,
 };
 
-static int dmabuf_attach(struct dma_buf *buf, struct device *dev,
+static int dmabuf_attach(struct dma_buf *buf, /*struct device *dev, */
 	struct dma_buf_attachment *attach)
 {
 	return 0;
@@ -341,8 +342,6 @@ static const struct dma_buf_ops dmabuf_ops = {
 	.release = dmabuf_release,
 	.begin_cpu_access = dmabuf_begin_cpu_access,
 	.end_cpu_access = dmabuf_end_cpu_access,
-	.map_atomic = dmabuf_map_atomic,
-	.unmap_atomic = dmabuf_unmap_atomic,
 	.map = dmabuf_map,
 	.unmap = dmabuf_unmap,
 	.mmap = dmabuf_mmap,
