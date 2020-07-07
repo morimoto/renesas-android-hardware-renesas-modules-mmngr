@@ -72,6 +72,11 @@ struct MM_PARAM {
 	unsigned int flag;
 };
 
+struct ion_phys_addr {
+	unsigned int dma_fd;
+	unsigned long phys_addr;
+};
+
 #define MM_IOC_MAGIC 'm'
 #define MM_IOC_ALLOC	_IOWR(MM_IOC_MAGIC, 0, struct MM_PARAM)
 #define MM_IOC_FREE	_IOWR(MM_IOC_MAGIC, 1, struct MM_PARAM)
@@ -80,5 +85,6 @@ struct MM_PARAM {
 #define MM_IOC_ALLOC_CO	_IOWR(MM_IOC_MAGIC, 4, struct MM_PARAM)
 #define MM_IOC_FREE_CO	_IOWR(MM_IOC_MAGIC, 5, struct MM_PARAM)
 #define MM_IOC_SHARE	_IOWR(MM_IOC_MAGIC, 6, struct MM_PARAM)
+#define MM_ION_GET_PHYS_ADDR	_IOWR(MM_IOC_MAGIC, 7, struct ion_phys_addr)
 
 #endif	/* __MMNGR_PRIVATE_CMN_H__ */

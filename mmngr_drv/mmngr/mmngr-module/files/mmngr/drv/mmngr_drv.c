@@ -901,6 +901,42 @@ static int close(struct inode *inode, struct file *file)
 	return 0;
 }
 
+#include <linux/ion.h>
+long mm_ion_get_phys_addr(unsigned long arg)
+{
+	struct dma_buf *dmabuf;
+	struct ion_buffer *buffer = NULL;
+	struct ion_phys_addr data;
+	struct page *page;
+	phys_addr_t paddr;
+
+	if (copy_from_user(&data, (void __user *)arg,
+			sizeof(struct ion_phys_addr)))
+		return -EFAULT;
+
+	dmabuf = dma_buf_get(data.dma_fd);
+	if (IS_ERR(dmabuf))
+		return PTR_ERR(dmabuf);
+
+	buffer = (struct ion_buffer *)dmabuf->priv;
+	if (IS_ERR_OR_NULL(buffer) || !buffer->size) {
+		pr_err("%s: Not initialized or empty buffer.\n", __func__);
+		return -EFAULT;
+	}
+
+	page = sg_page(buffer->sg_table->sgl);
+	paddr = page_to_phys(page);
+
+	dma_buf_put(dmabuf);
+
+	data.phys_addr = (unsigned long)paddr;
+	if (copy_to_user((void __user *)arg, &data,
+				sizeof(struct ion_phys_addr)))
+		return -EFAULT;
+
+	return 0;
+}
+
 static long ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	int		ercd;
@@ -957,6 +993,9 @@ static long ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			goto exit;
 		}
 		break;
+	case MM_ION_GET_PHYS_ADDR:
+		ret = mm_ion_get_phys_addr(arg);
+		goto exit;
 	default:
 		pr_err("%s MMD CMD EFAULT\n", __func__);
 		ret = -EFAULT;
